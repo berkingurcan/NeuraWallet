@@ -1,8 +1,11 @@
+import { Link, useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, Image, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
       <Image
@@ -18,8 +21,7 @@ export default function HomeScreen() {
       <Button
         mode="contained"
         onPress={() => {
-          // Navigate to wallet setup or handle wallet setup logic
-          console.log('Set Up Wallet button pressed');
+          router.push('/wallet'); // Navigate to the Wallet screen
         }}
         style={styles.button}>
         Set Up Wallet
