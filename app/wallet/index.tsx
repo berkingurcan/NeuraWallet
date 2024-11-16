@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, Text, TextInput } from 'react-native-paper';
@@ -13,6 +14,14 @@ export default function WalletScreen() {
                 onChangeText={text => setText(text)}
                 style={styles.input}
             />
+            <Button
+                mode="contained"
+                onPress={() => {
+                    router.push('/dashboard'); // Navigate to the Wallet screen
+                    }}
+                style={styles.button}>
+                Set Up Wallet   
+            </Button>
         </View>
     );
 }
@@ -33,4 +42,8 @@ const styles = StyleSheet.create({
     input: {
       width: '80%', // Makes the input field 80% of the screen width
     },
+    button: {
+        marginTop: 10,
+        width: '60%',
+      },
   });

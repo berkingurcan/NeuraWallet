@@ -13,7 +13,7 @@ export default function HomeScreen() {
         style={styles.reactLogo}
       />
       <Text variant="headlineLarge" style={styles.title}>
-        Welcome!
+        NeuraWallet!
       </Text>
       <Text variant="bodyMedium" style={styles.description}>
         Discover the features of our app. You can manage your tasks, explore new opportunities, and much more. Start by setting up your wallet to unlock all features!
@@ -21,6 +21,7 @@ export default function HomeScreen() {
       <Button
         mode="contained"
         onPress={() => {
+          console.log("setupwallet")
           router.push('/wallet'); // Navigate to the Wallet screen
         }}
         style={styles.button}>
