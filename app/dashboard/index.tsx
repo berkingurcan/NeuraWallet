@@ -1,15 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Clipboard, Alert } from 'react-native';
 import { Text, Button, Card, ProgressBar, FAB, Divider } from 'react-native-paper';
+import * as FileSystem from 'expo-file-system';
 
 const Dashboard = () => {
-  const walletBalance = 1.25; // Example ETH balance
+  const [publicKey, setPublicKey] = useState('');
+  const [walletBalance, setWalletBalance] = useState(0); // Example balance
   const dailySpendingCap = 0.5; // Daily spending limit in ETH
   const dailySpent = 0.2; // Amount spent today in ETH
   const remainingCap = dailySpendingCap - dailySpent;
 
-  const publicKey = '0x1234567890abcdef1234567890abcdef12345678'; // Example public key
-  const shortenedKey = `${publicKey.slice(0, 6)}...${publicKey.slice(-4)}`;
+  useEffect(() => {
+    const loadPublicKey = async () => {
+      try {
+        const envFilePath = `${FileSystem.documentDirectory}.env`;
+        const envContent = await FileSystem.readAsStringAsync(envFilePath);
+        const publicKeyMatch = envContent.match(/PUBLIC_KEY=(.+)/);
+
+        if (publicKeyMatch) {
+          setPublicKey(publicKeyMatch[1]);
+        } else {
+          throw new Error('Public key not found in .env file');
+        }
+      } catch (error) {
+        console.error('Error loading public key:', error);
+      }
+    };
+
+    loadPublicKey();
+  }, []);
+
+  const shortenedKey = publicKey
+    ? `${publicKey.slice(0, 6)}...${publicKey.slice(-4)}`
+    : 'Loading...';
 
   const handleCopyToClipboard = () => {
     Clipboard.setString(publicKey);

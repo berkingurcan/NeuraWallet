@@ -1,46 +1,60 @@
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, Text, TextInput } from 'react-native-paper';
 
-import { ethers } from "ethers";
-import * as fs from "react-native-fs";
+import 'react-native-get-random-values';
+import "@ethersproject/shims"
+
+import {ethers} from "ethers"
+import * as FileSystem from 'expo-file-system';
 
 export default function WalletScreen() {
+    const router = useRouter();
 
-    function createKeypair() {
-        const wallet = ethers.Wallet.createRandom();
-        const privateKey = wallet.privateKey;
-        const publicKey = wallet.address;
+    async function createKeypair() {
+        try {
+            const wallet = ethers.Wallet.createRandom();
+            const privateKey = wallet.privateKey;
+            const publicKey = wallet.address;
 
-        const envContent = `PRIVATE_KEY=${privateKey}
-                            PUBLIC_KEY=${publicKey}`;
+            const envContent = `PRIVATE_KEY=${privateKey}\nPUBLIC_KEY=${publicKey}`;
+            const envFilePath = `${FileSystem.documentDirectory}.env`;
 
-        const envFilePath = path.resolve(__dirname, ".env");
-        fs.writeFile(envFilePath, envContent, { encoding: "utf-8" });
-        
-        console.log("Ethereum key pair generated and saved to .env file:");
-        console.log(`Private Key: ${privateKey}`);
-        console.log(`Public Key: ${publicKey}`);
+            if (!FileSystem.documentDirectory) {
+                throw new Error('FileSystem.documentDirectory is not accessible.');
+            }
+
+            await FileSystem.writeAsStringAsync(envFilePath, envContent);
+
+            console.log("Ethereum key pair generated and saved to .env file:");
+            console.log(`Private Key: ${privateKey}`);
+            console.log(`Public Key: ${publicKey}`);
+        } catch (error) {
+            console.error("Error saving .env file:", error);
+        }
     }
 
     const [text, setText] = React.useState("");
+
     return (
         <View style={styles.container}>
             <Text style={styles.text}>Enter Your Pass Key</Text>
             <TextInput 
-                mode='flat'
+                mode="flat"
                 value={text}
-                onChangeText={text => setText(text)}
+                onChangeText={setText}
                 style={styles.input}
             />
             <Button
                 mode="contained"
-                onPress={() => {
-                    router.push('/dashboard'); // Navigate to the Wallet screen
-                    }}
+                onPress={async () => {
+                    console.log("Creating keypair...");
+                    await createKeypair();
+                    router.push('/dashboard');
+                }}
                 style={styles.button}>
-                Set Up Wallet   
+                Set Up Wallet
             </Button>
         </View>
     );
@@ -48,22 +62,22 @@ export default function WalletScreen() {
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1, // Makes the container fill the screen
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 16, // Optional padding for better alignment
-      backgroundColor: '#f5f5f5', // Optional background color for a cleaner look
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 16,
+        backgroundColor: '#f5f5f5',
     },
     text: {
-      marginBottom: 10, // Adds space between the text and input
-      fontSize: 16, // Adjust font size for better readability
-      textAlign: 'center', // Center-align the text
+        marginBottom: 10,
+        fontSize: 16,
+        textAlign: 'center',
     },
     input: {
-      width: '80%', // Makes the input field 80% of the screen width
+        width: '80%',
     },
     button: {
         marginTop: 10,
         width: '60%',
-      },
-  });
+    },
+});
