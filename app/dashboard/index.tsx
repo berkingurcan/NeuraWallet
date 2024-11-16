@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Clipboard, Alert } from 'react-native';
 import { Text, Button, Card, ProgressBar, FAB, Divider } from 'react-native-paper';
 
 const Dashboard = () => {
@@ -8,8 +8,35 @@ const Dashboard = () => {
   const dailySpent = 0.2; // Amount spent today in ETH
   const remainingCap = dailySpendingCap - dailySpent;
 
+  const publicKey = '0x1234567890abcdef1234567890abcdef12345678'; // Example public key
+  const shortenedKey = `${publicKey.slice(0, 6)}...${publicKey.slice(-4)}`;
+
+  const handleCopyToClipboard = () => {
+    Clipboard.setString(publicKey);
+    Alert.alert('Copied to Clipboard', 'Your public key has been copied.');
+  };
+
   return (
     <View style={styles.container}>
+      {/* Public Key Section */}
+      <View style={styles.publicKeyContainer}>
+        <Text variant="bodyLarge" style={styles.publicKeyLabel}>
+          Your address:
+        </Text>
+        <Text selectable style={styles.publicKey}>
+          {shortenedKey}
+        </Text>
+        <Button
+          mode="text"
+          icon="content-copy"
+          onPress={handleCopyToClipboard}
+          compact
+          style={styles.copyButton}
+        >
+          Copy
+        </Button>
+      </View>
+
       {/* Wallet Balance */}
       <Card style={styles.card}>
         <Card.Content>
@@ -92,6 +119,26 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: '#f4f4f4',
+  },
+  publicKeyContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+    padding: 8,
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+  },
+  publicKeyLabel: {
+    fontWeight: 'bold',
+    marginRight: 8,
+  },
+  publicKey: {
+    flex: 1,
+    fontSize: 14,
+    color: '#333',
+  },
+  copyButton: {
+    marginLeft: 8,
   },
   card: {
     marginBottom: 16,
